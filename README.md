@@ -1,44 +1,21 @@
-# BizzantBot
+# BizzantBot — fresh start
 
-Telegram bot starter project for Railway, built with Python and `python-telegram-bot`.
+Minimal Telegram bot configured for Railway worker deployment.
 
-## Features
+## Commands
+- `/start` — start message
+- `/help` — help
+- Unknown commands receive a short response
 
-- `/start` — greeting and command list
-- `/help` — help message
-- Long polling (no public URL or webhook required)
-- Startup logs with Railway service/environment/deployment metadata
-- Secret-safe diagnostics: the bot never prints the `BOT_TOKEN` value
+## Railway deployment
+1. Connect this repository to a Railway service.
+2. Use a **worker** service (not a web server).
+3. Add `BOT_TOKEN` to the Variables of the same service and environment.
+4. Deploy the latest commit from `main`.
 
-## Deploy on Railway
+The start command is in `Procfile`. There is intentionally no `runtime.txt` version pin: Railway/Railpack should select its supported Python runtime. The token is never stored in the repository or printed in logs.
 
-1. Connect this GitHub repository to a Railway **worker** service.
-2. In that same service and target environment, add the variable:
-   - `BOT_TOKEN` = token from Telegram's `@BotFather`
-3. Review and deploy any staged variable changes.
-4. Deploy the latest commit from the `main` branch.
-5. Open the deployment logs. A healthy startup includes `BOT_TOKEN present: True` and `BizzantBot is starting in polling mode.`
+If the process logs that `BOT_TOKEN` is missing, that variable is not present in the environment attached to the active process. Source-code changes cannot attach Railway variables to a service.
 
-The repository uses `Procfile` to start the bot with `python -u main.py`. Do not configure this service as a web server.
-
-## Local run
-
-Python 3.10+ is recommended.
-
-```bash
-python -m venv .venv
-# Windows:
-.venv\\Scripts\\activate
-# macOS/Linux:
-source .venv/bin/activate
-
-pip install -r requirements.txt
-# Set BOT_TOKEN in your shell (do not commit it), then:
-python main.py
-```
-
-## Troubleshooting
-
-If the log says `BOT_TOKEN present: False`, the Python process did not receive the variable. Confirm that the variable belongs to the exact Railway service and environment used by the active deployment. The bot cannot fix Railway variable scoping from source code.
-
-Never commit `.env`, bot tokens, or credentials.
+## Local use
+Install dependencies with `pip install -r requirements.txt`, set `BOT_TOKEN` in your shell, then run `python main.py`.
